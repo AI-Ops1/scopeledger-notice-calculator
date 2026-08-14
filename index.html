@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Notice Deadline Calculator — Free Tool for Specialty Contractors | ScopeLedger</title>
+<meta name="description" content="Calculate your construction change-order notice deadline free. Supports AIA A201-2017, ConsensusDocs 200, and custom contract notice periods." />
+<style>
+  :root {
+    --ink: #101826;
+    --panel: #16202e;
+    --panel-2: #1c283a;
+    --steel: #3e5c76;
+    --steel-line: #2a3b52;
+    --orange: #ff6a2b;
+    --amber: #f2b705;
+    --green: #3ecf8e;
+    --red: #ff5c5c;
+    --white: #edeff2;
+    --muted: #8a97a8;
+    --font-display: "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+    --font-body: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    --font-mono: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--white);
+    font-family: var(--font-body);
+    line-height: 1.55;
+  }
+
+  a { color: var(--orange); }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--steel-line);
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 15px;
+  }
+
+  .brand-mark {
+    width: 8px;
+    height: 22px;
+    background: var(--orange);
+    flex-shrink: 0;
+  }
+
+  .topbar a.cta {
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: 1px solid var(--orange);
+    color: var(--orange);
+    padding: 8px 14px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .topbar a.cta:hover {
+    background: var(--orange);
+    color: var(--ink);
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  h1 {
+    margin: 0 0 14px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-stretch: condensed;
+    font-size: 34px;
+    line-height: 1.15;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  .lede {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 58ch;
+    margin: 0 0 36px;
+  }
+
+  .calculator {
+    background: var(--panel);
+    border: 1px solid var(--steel-line);
+    border-radius: 6px;
+    padding: 28px;
+    margin-bottom: 40px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  select, input[type="date"], input[type="number"] {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--steel-line);
+    color: var(--white);
+    padding: 12px 12px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-family: var(--font-body);
+  }
+
+  select:focus, input:focus {
+    outline: 2px solid var(--orange);
+    outline-offset: 1px;
+    border-color: var(--orange);
+  }
+
+  .calc-btn {
+    width: 100%;
+    background: var(--orange);
+    color: var(--ink);
+    border: none;
+    padding: 14px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 6px;
+  }
+
+  .calc-btn:hover { background: #ff7d47; }
+
+  .tag[hidden] { display: none; }
+
+  .tag {
+    display: flex;
+    margin-top: 22px;
+    background: var(--panel-2);
+    border: 1px solid var(--steel-line);
+    border-radius: 4px;
+    overflow: hidden;
+    background-image: repeating-linear-gradient(90deg, transparent, transparent 6px, var(--steel-line) 6px, var(--steel-line) 7px);
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+  }
+
+  .tag-strip { width: 10px; flex-shrink: 0; background: var(--green); }
+  .tag[data-status="warn"] .tag-strip { background: var(--amber); }
+  .tag[data-status="danger"] .tag-strip { background: var(--red); }
+
+  .tag-body { padding: 18px 20px; flex: 1; }
+
+  .tag-label {
+    margin: 0 0 6px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .tag-date {
+    margin: 0 0 6px;
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .tag-countdown {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .disclaimer {
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--muted);
+    margin: 18px 0 0;
+  }
+
+  section.explainer {
+    border-top: 1px solid var(--steel-line);
+    padding-top: 36px;
+    margin-top: 12px;
+  }
+
+  section.explainer h2 {
+    font-family: var(--font-display);
+    text-transform: uppercase;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    margin: 0 0 12px;
+  }
+
+  section.explainer p {
+    color: var(--muted);
+    font-size: 14.5px;
+    max-width: 62ch;
+  }
+
+  section.explainer + section.explainer {
+    margin-top: 28px;
+  }
+
+  footer {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 24px 40px;
+    border-top: 1px solid var(--steel-line);
+    color: var(--muted);
+    font-size: 13px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  footer a { font-weight: 700; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .footer-sep { color: var(--steel); }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand"><span class="brand-mark"></span>ScopeLedger</div>
+  <a class="cta" href="https://scopeledger.net?utm_source=github_pages&utm_medium=tool&utm_campaign=notice_calc" target="_blank" rel="noopener">Visit ScopeLedger →</a>
+</div>
+
+<main>
+  <p class="eyebrow">Free Tool</p>
+  <h1>Notice Deadline Calculator</h1>
+  <p class="lede">
+    Figure out exactly when your change-order or claim notice is due —
+    based on the standard-form notice period in your contract, or a
+    custom day count you enter yourself.
+  </p>
+
+  <div class="calculator">
+    <div class="field">
+      <label for="contractType">Contract type</label>
+      <select id="contractType">
+        <option value="21">AIA A201-2017 — general claim (21 days)</option>
+        <option value="14">AIA A201-2017 — differing site conditions (14 days)</option>
+        <option value="14-cd">ConsensusDocs 200 — claim notice (14 days)</option>
+        <option value="custom">Custom — enter days manually</option>
+      </select>
+    </div>
+
+    <div class="field" id="customDaysField" hidden>
+      <label for="customDays">Notice window (calendar days)</label>
+      <input type="number" id="customDays" min="1" max="365" placeholder="e.g. 10" />
+    </div>
+
+    <div class="field">
+      <label for="eventDate">Date of event / discovery</label>
+      <input type="date" id="eventDate" />
+    </div>
+
+    <button id="calcBtn" class="calc-btn">Calculate deadline</button>
+
+    <section id="result" class="tag" hidden>
+      <div class="tag-strip"></div>
+      <div class="tag-body">
+        <p class="tag-label">Notice due by</p>
+        <p id="deadlineDate" class="tag-date">—</p>
+        <p id="countdown" class="tag-countdown">—</p>
+      </div>
+    </section>
+
+    <p class="disclaimer">
+      Not legal advice. Standard-form periods shown here are commonly used
+      defaults — always confirm the actual notice clause in your signed
+      contract, which may be modified by amendment or exhibit.
+    </p>
+  </div>
+
+  <section class="explainer">
+    <h2>Why notice deadlines matter more than estimating</h2>
+    <p>
+      Up to 20% of construction profit gets lost to unbilled extras —
+      work that happened but was never formally noticed, documented, or
+      billed in time. Most GC agreements set a strict window (often
+      14–21 calendar days) to submit written notice after a change or
+      claim event. Miss it, and you can lose the right to be paid for
+      that work entirely, regardless of how good your original estimate
+      was.
+    </p>
+  </section>
+
+  <section class="explainer">
+    <h2>Built for specialty trade contractors</h2>
+    <p>
+      This tool is part of
+      <a href="https://scopeledger.net?utm_source=github_pages&utm_medium=tool&utm_campaign=notice_calc" target="_blank" rel="noopener">ScopeLedger</a>,
+      built for electrical, mechanical, HVAC, and fire-protection
+      contractors who need every change order and notice deadline
+      tracked automatically — not buried in a 60-page GC agreement.
+    </p>
+  </section>
+</main>
+
+<footer>
+  <span>Built by</span>
+  <a href="https://scopeledger.net?utm_source=github_pages&utm_medium=footer&utm_campaign=notice_calc" target="_blank" rel="noopener">ScopeLedger</a>
+  <span class="footer-sep">·</span>
+  <span>deadline &amp; change-order tracking for specialty trades</span>
+</footer>
+
+<script>
+  const contractType = document.getElementById("contractType");
+  const customDaysField = document.getElementById("customDaysField");
+  const customDays = document.getElementById("customDays");
+  const eventDate = document.getElementById("eventDate");
+  const calcBtn = document.getElementById("calcBtn");
+  const result = document.getElementById("result");
+  const deadlineDateEl = document.getElementById("deadlineDate");
+  const countdownEl = document.getElementById("countdown");
+
+  const today = new Date();
+  eventDate.value = toInputDate(today);
+
+  contractType.addEventListener("change", () => {
+    customDaysField.hidden = contractType.value !== "custom";
+  });
+
+  calcBtn.addEventListener("click", calculate);
+
+  function toInputDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${y}-${m}-${day}`;
+  }
+
+  function getDays() {
+    if (contractType.value === "custom") {
+      const v = parseInt(customDays.value, 10);
+      return Number.isFinite(v) && v > 0 ? v : null;
+    }
+    return parseInt(contractType.value, 10);
+  }
+
+  function calculate() {
+    const days = getDays();
+    if (!days) {
+      customDays.focus();
+      customDays.style.borderColor = "var(--red)";
+      return;
+    }
+    if (!eventDate.value) {
+      eventDate.focus();
+      return;
+    }
+
+    const [y, m, d] = eventDate.value.split("-").map(Number);
+    const start = new Date(y, m - 1, d);
+    const deadline = new Date(start);
+    deadline.setDate(deadline.getDate() + days);
+
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const deadlineMidnight = new Date(deadline);
+    deadlineMidnight.setHours(0, 0, 0, 0);
+
+    const msPerDay = 24 * 60 * 60 * 1000;
+    const daysLeft = Math.round((deadlineMidnight - now) / msPerDay);
+
+    deadlineDateEl.textContent = deadline.toLocaleDateString(undefined, {
+      weekday: "short", year: "numeric", month: "short", day: "numeric",
+    });
+
+    let status = "ok";
+    let countdownText;
+    if (daysLeft < 0) {
+      status = "danger";
+      countdownText = `${Math.abs(daysLeft)} day${Math.abs(daysLeft) === 1 ? "" : "s"} past deadline`;
+    } else if (daysLeft === 0) {
+      status = "danger";
+      countdownText = "Due today";
+    } else if (daysLeft <= 3) {
+      status = "danger";
+      countdownText = `${daysLeft} day${daysLeft === 1 ? "" : "s"} remaining`;
+    } else if (daysLeft <= 7) {
+      status = "warn";
+      countdownText = `${daysLeft} days remaining`;
+    } else {
+      status = "ok";
+      countdownText = `${daysLeft} days remaining`;
+    }
+
+    countdownEl.textContent = countdownText;
+    result.dataset.status = status;
+    result.hidden = false;
+  }
+</script>
+
+</body>
+</html>
